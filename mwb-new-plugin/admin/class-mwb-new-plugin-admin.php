@@ -447,29 +447,27 @@ class Mwb_new_plugin_Admin {
 	 * @return void
 	 */
 	public function mwb_custom_hook_export_callback() {
-		//header('Content-Type: text/csv');
-		//header('Content-Disposition: attachment; filename="sample.csv"');
-		$file = MWB_NEW_PLUGIN_DIR_PATH . 'export.csv';
-		$db_file = fopen( $file , 'w+' );
-		$args         = array(
+
+		$file    = MWB_NEW_PLUGIN_DIR_PATH . 'export.csv';
+		$db_file = fopen( $file, 'w+' );
+
+		$args = array(
 			'numberposts' => 100,
 			'post_type'   => 'wpcust_product',
 		);
-		$latest_books = get_posts( $args );
-		$posts        = array();
 
-		foreach ( $latest_books as $post ) {
+		$data = get_posts( $args );
 
-			$posts[] .= $post->post_title;
-			$posts[] .= get_post_meta( $post->ID, 'product_price', true );
-			$posts[] .= get_post_meta( $post->ID, 'product_sku', true );
-			$posts[] .= get_post_meta( $post->ID, 'product_review', true );
-			fputcsv( $db_file, $posts );
+		fputcsv( $db_file, array( 'Title', 'SKU', 'Review' ) );
 
+		foreach ( $data as $post ) {
+
+			$postsa = $post->post_title;
+			$postsb = get_post_meta( $post->ID, 'product_sku', true );
+			$postsc = get_post_meta( $post->ID, 'product_review', true );
+			fputcsv( $db_file, array( $postsa, $postsb, $postsc ) );
 
 		}
-		// foreach($posts as $value){
-		// }
 		fclose( $db_file );
 
 	}
