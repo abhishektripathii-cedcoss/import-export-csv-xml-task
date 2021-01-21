@@ -370,7 +370,7 @@ class Mwb_new_plugin_Admin {
 	 */
 	public function mwb_cron_callback( $schedules ) { 
 		$schedules['twenty_minutes'] = array(
-			'interval' => 1200,
+			'interval' => 36000,
 			'display'  => esc_html__( 'Every Twenty minutes' ),
 		);
 		return $schedules;
@@ -447,9 +447,14 @@ class Mwb_new_plugin_Admin {
 	 * @return void
 	 */
 	public function mwb_custom_hook_export_callback() {
+		// header('Content-Type: text/csv');
+		// header('Content-Disposition: attachment; filename="export.csv"');
+		// header('Pragma:  no cache');
+		// header('Expires: 0');
 
 		$file    = MWB_NEW_PLUGIN_DIR_PATH . 'export.csv';
 		$db_file = fopen( $file, 'w+' );
+		// $fp = fopen('php://output', 'w+');
 
 		$args = array(
 			'numberposts' => 100,
@@ -459,6 +464,7 @@ class Mwb_new_plugin_Admin {
 		$data = get_posts( $args );
 
 		fputcsv( $db_file, array( 'Title', 'SKU', 'Review' ) );
+		// fputcsv( $fp, array( 'Title', 'SKU', 'Review' ) );
 
 		foreach ( $data as $post ) {
 
@@ -466,9 +472,88 @@ class Mwb_new_plugin_Admin {
 			$postsb = get_post_meta( $post->ID, 'product_sku', true );
 			$postsc = get_post_meta( $post->ID, 'product_review', true );
 			fputcsv( $db_file, array( $postsa, $postsb, $postsc ) );
+			// fputcsv( $fp, array( $postsa, $postsb, $postsc ), ',');
 
 		}
+		// fclose($fp );
 		fclose( $db_file );
+
+	}
+
+	/**
+	 * Cron schedule interval function for batches
+	 *
+	 * @param array $schedules comment.
+	 * @return schedules
+	 */
+	public function mwb_cron_batch_callback( $schedules ) { 
+		$schedules['thirty_minutes'] = array(
+			'interval' => 1800,
+			'display'  => esc_html__( 'Every Thirty minutes' ),
+		);
+		return $schedules;
+	}
+
+	/**
+	 * Checking next schedule function for batch display
+	 *
+	 * @return void
+	 */
+	public function mwb_check_next_batch_schedule() {
+		if ( ! wp_next_scheduled( 'bl_batch_hook' ) ) {
+			wp_schedule_event( time(), 'thirty_minutes', 'bl_batch_hook' );
+		}
+	}
+	/**
+	 * Custom cron hook callback function for batch display
+	 *
+	 * @return void
+	 */
+	public function mwb_custom_hook_batch_callback() {
+		$i = ( get_option( 'displaybatch', true ) ) ? get_option( 'displaybatch', true ) : 0;
+
+		if ( empty( get_option( 'displaybatch' ) ) ) {
+			$k = 10;
+		} else {
+			$k = $k + 10;
+		}
+
+		$temp = $i;
+		$con  = get_option( 'displaybatch' );
+		$xml  = simplexml_load_file( MWB_NEW_PLUGIN_DIR_PATH . 'product.xml' ) or die( 'Error: Cannot create object' );
+		if ( ! empty( $xml ) ) {
+			foreach ( $xml as $record ) {
+				if ( $con > 0 ) {
+					$con = $con - 1;
+					continue;
+				}
+				$i = $i + 1;
+				$title  = strval( $record->TITLE );
+				$review = strval( $record->REVIEWS );
+				$price  = strval( $record->PRICE ) ;
+				$sku    = strval( $record->SKU ) ;
+
+				$my_post = array(
+					'post_title'   => $title,
+					'post_content' => '',
+					'post_status'  => 'publish',
+					'post_author'  => 1,
+					'post_type'    => 'wpcust_product',
+					'meta_input'   => array(
+						'product_price'  => $price,
+						'product_sku'    => $sku,
+						'product_review' => $review,
+					),
+				);
+
+				if ( ( $temp + 10 ) == $i ) {
+					break;
+				}
+				wp_insert_post( $my_post );
+
+			}
+			update_option( 'displaybatch', $i );
+		}
 
 	}
 

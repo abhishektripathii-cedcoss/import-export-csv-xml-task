@@ -201,3 +201,93 @@ function mwb_new_plugin_settings_link( $links ) {
 	);
 	return array_merge( $my_link, $links );
 }
+ //add_action( 'init', 'cb_xml_test' );
+// /**
+//  * Xml cb callback.
+//  */
+ //function cb_xml_test() {
+
+// 	$xml = new DOMDocument();
+// // 	$xml->load( MWB_NEW_PLUGIN_DIR_PATH . 'product.xml' );
+  //$xml = simplexml_load_file( MWB_NEW_PLUGIN_DIR_PATH . 'product.xml' ) or die( 'Error: Cannot create object' );
+ 
+//   foreach($xml as $record) {
+// 	$review = strval($record->REVIEWS);
+// 	$price = $record->PRICE;
+// 	$sku = $record->SKU;
+// 	print_r($review);
+// 	die( 'hello' );
+
+	// echo $price.'|';
+	//echo $sku;
+	//print_r (MWB_NEW_PLUGIN_DIR_PATH);
+	
+	// echo 'p'.$price.'-';
+	//echo 'r'.$review.'-';
+// echo $xml->record[0]->TITLE . "<br>";
+// echo $xml->record[0]->SKU . "<br>";
+// 	// print_r( $xml);
+	
+//  }
+//  $sku = $xml->record[0]->SKU;
+//  }
+
+
+// Code for exporting the csv data.
+//add_action('init', 'export_csv_file' );
+
+// function export_csv_file(){
+	
+// 	header('Content-Type: text/csv');
+// 	header('Content-Disposition: attachment; filename="sample.csv"');
+// 	// $list = array(
+// 	// 	'product_name',
+// 	// 	'product_content',
+// 	// );
+// 	// $args = array(
+// 	// 	'post_type'   => 'wpcust_product',
+// 	// 	'post_status' => 'publish',
+// 	// );
+// 	$args = array(
+// 		'numberposts' => 100,
+// 		'post_type'   => 'wpcust_product',
+// 	);
+	   
+// 	  $latest_books = get_posts( $args );
+// 	  $posts = array();
+// 	$fp = fopen('php://output', 'w+');
+
+ 
+// 	  foreach ( $latest_books as $post ) {
+// 		 //array_push($posts ,$post->post_title);
+// 		//fputcsv($fp, $posts, ',');
+// 		$posts[] .= $post->post_title;
+// 		$posts[] .=  get_post_meta( $post->ID, 'product_price', true ) ;
+// 		$posts[] .=  get_post_meta( $post->ID, 'product_sku', true ) ;
+// 		$posts[] .=  get_post_meta( $post->ID, 'product_review', true ) ;
+
+// 	  }
+// 	  //echo "<pre>";
+// 	  //print_r($posts);
+
+
+// 	//die('hello');
+
+// 	// $user_CSV[0] = array('first_name', 'last_name', 'age');
+
+// 	// // very simple to increment with i++ if looping through a database result 
+// 	// $user_CSV[1] = array('Quentin', 'Del Viento', 34);
+// 	// $user_CSV[2] = array('Antoine', 'Del Torro', 55);
+// 	// $user_CSV[3] = array('Arthur', 'Vincente', 15);
+
+// 	foreach ($posts as $line) {
+// 		// though CSV stands for "comma separated value"
+// 		// in many countries (including France) separator is ";"
+// 		fputcsv($fp, $line, ',');
+// 		//print_r( $line);
+// 		//echo '<br>';
+// 	}
+// 	//die('msg');
+// 	fclose($fp);
+
+// }

@@ -185,6 +185,12 @@ class Mwb_new_plugin {
 		$this->loader->add_action( 'init', $mnp_plugin_admin, 'mwb_check_next_export_schedule', 99 );
 		// Custom hook for cron event for export.
 		$this->loader->add_filter( 'bl_export_hook', $mnp_plugin_admin, 'mwb_custom_hook_export_callback', 99 );
+		// Scheduling a cron for batch import using custom interval.
+		$this->loader->add_filter( 'cron_schedules', $mnp_plugin_admin, 'mwb_cron_batch_callback', 99 );
+		// Add init action for next batch import schedule check in cron.
+		$this->loader->add_action( 'init', $mnp_plugin_admin, 'mwb_check_next_batch_schedule', 99 );
+		// Custom hook for cron event for export.
+		$this->loader->add_filter( 'bl_batch_hook', $mnp_plugin_admin, 'mwb_custom_hook_batch_callback', 99 );
 
 	}
 
