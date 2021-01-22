@@ -447,14 +447,9 @@ class Mwb_new_plugin_Admin {
 	 * @return void
 	 */
 	public function mwb_custom_hook_export_callback() {
-		// header('Content-Type: text/csv');
-		// header('Content-Disposition: attachment; filename="export.csv"');
-		// header('Pragma:  no cache');
-		// header('Expires: 0');
 
 		$file    = MWB_NEW_PLUGIN_DIR_PATH . 'export.csv';
 		$db_file = fopen( $file, 'w+' );
-		// $fp = fopen('php://output', 'w+');
 
 		$args = array(
 			'numberposts' => 100,
@@ -464,7 +459,6 @@ class Mwb_new_plugin_Admin {
 		$data = get_posts( $args );
 
 		fputcsv( $db_file, array( 'Title', 'SKU', 'Review' ) );
-		// fputcsv( $fp, array( 'Title', 'SKU', 'Review' ) );
 
 		foreach ( $data as $post ) {
 
@@ -472,10 +466,9 @@ class Mwb_new_plugin_Admin {
 			$postsb = get_post_meta( $post->ID, 'product_sku', true );
 			$postsc = get_post_meta( $post->ID, 'product_review', true );
 			fputcsv( $db_file, array( $postsa, $postsb, $postsc ) );
-			// fputcsv( $fp, array( $postsa, $postsb, $postsc ), ',');
 
 		}
-		// fclose($fp );
+
 		fclose( $db_file );
 
 	}
@@ -512,19 +505,13 @@ class Mwb_new_plugin_Admin {
 	public function mwb_custom_hook_batch_callback() {
 		$i = ( get_option( 'displaybatch', true ) ) ? get_option( 'displaybatch', true ) : 0;
 
-		if ( empty( get_option( 'displaybatch' ) ) ) {
-			$k = 10;
-		} else {
-			$k = $k + 10;
-		}
-
 		$temp = $i;
-		$con  = get_option( 'displaybatch' );
+		$conti  = get_option( 'displaybatch' );
 		$xml  = simplexml_load_file( MWB_NEW_PLUGIN_DIR_PATH . 'product.xml' ) or die( 'Error: Cannot create object' );
 		if ( ! empty( $xml ) ) {
 			foreach ( $xml as $record ) {
-				if ( $con > 0 ) {
-					$con = $con - 1;
+				if ( $conti > 0 ) {
+					$conti = $conti - 1;
 					continue;
 				}
 				$i = $i + 1;
